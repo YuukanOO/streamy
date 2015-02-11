@@ -6,7 +6,7 @@
 
 Register a callback to be called when the connection has been made.
 
-```
+```javascript
 // Client
 Streamy.onConnect(function() {
   // this <Streamy>
@@ -24,7 +24,7 @@ Streamy.onConnect(function(socket) {
 
 Register a callback to be called when the message is received.
 
-```
+```javascript
 // Client
 Streamy.on('message_from_server', function(data) {
   // this <Streamy>
@@ -43,7 +43,7 @@ Streamy.on('message_from_client', function(data, socket) {
 Send a message for the given `event_name` with associated data.
 On the server, `to` is used to specify on which socket the event should be write.
 
-```
+```javascript
 // Client
 Streamy.emit('message_from_client', {
   m: 'This message will be send to the server'
@@ -74,7 +74,7 @@ Retrieve socket sessions. If `sid` is provided:
 - On the client, it will returns a special object with an `emit` method to write a direct message (controlled by the server)
 - On the server, it will returns the socket associated with this sid or else a mock
 
-```
+```javascript
 // Client
 Streamy.sessions('someSessionID').emit('hello', { name: 'John' });
 
@@ -113,7 +113,7 @@ Returns the list of all available rooms if no name is given or else the Room obj
 
 Helpers to retrieve the userId inside a streamy callback. On the server, you will need to give it the associated socket.
 
-```
+```javascript
 // Client
 Streamy.onConnect(function() {
   console.log("I'm connected!", this.userId());
