@@ -21,19 +21,22 @@ Package.onUse(function(api) {
   api.addFiles([
     'lib/namespaces.js',
     'lib/core/core.js',
-    'lib/direct_messages/direct_messages.js'
+    'lib/direct_messages/direct_messages.js',
+    'lib/broadcasts/broadcasts.js'
   ]);
   
   // Client only
   api.addFiles([
     'lib/core/core_client.js',
-    'lib/direct_messages/direct_messages_client.js'
+    'lib/direct_messages/direct_messages_client.js',
+    'lib/broadcasts/broadcasts_client.js'
   ], 'client');
   
   // Server only
   api.addFiles([
     'lib/core/core_server.js',
-    'lib/direct_messages/direct_messages_server.js'
+    'lib/direct_messages/direct_messages_server.js',
+    'lib/broadcasts/broadcasts_server.js'
   ], 'server');
   
   api.addFiles('lib/startup.js');
