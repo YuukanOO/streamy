@@ -62,10 +62,12 @@ Streamy.on('message_from_client', function(data, socket) {
 
 ## Sessions
 
+Enable direct messages.
+
 By default, the server allow direct messages, if you want to edit this behaviour, just override server-side methods:
 
-- `Streamy.__direct__.allow`: function(data, from) { return true; }
-- `Streamy.__direct__.deny`: function(data, from) { return false; }
+- `Streamy.DirectMessages.allow: function(data, from) { return true; }`
+- `Streamy.DirectMessages.deny: function(data, from) { return false; }`
 
 ### Streamy.sessions(sid)
 
@@ -97,15 +99,58 @@ var all_sessions = Streamy.sessions();
 var one_session = Streamy.sessions('someSessionID'); // Returns the socket
 ```
 
-## Rooms (NOT IMPLEMENTED YET)
+## BroadCasts
+
+Broadcast a message to all connected clients.
+
+By default, the server allow direct broadcasting, if you want to edit this behaviour, just override server-side methods:
+
+- `Streamy.BroadCasts.allow: function(data, from) { return true; }`
+- `Streamy.BroadCasts.deny: function(data, from) { return false; }`
+
+```javascript
+// Client
+Streamy.broadcast('myMessage', { name: 'bob' });
+
+// True real emitted object is
+{
+  msg: '__broadcast__',
+  __msg: 'myMessage',
+  __data: { name: 'bob' }
+}
+
+// Server
+Streamy.broadcast('myMessage', { name: 'bob' });
+```
+
+## Rooms
+
+Enable area communication.
 
 ### Streamy.join(room_name)
 
 Join the given room.
 
+```javascript
+// Client
+Streamy.join('pool');
+
+// Server
+Streamy.join('pool', user_socket); // Made the user join the given room name
+```
+
 ### Streamy.rooms(room_name)
 
-Returns the list of all available rooms if no name is given or else the Room object.
+Retrieve a room wrapper to emit in this room only.
+
+```javascript
+// Client
+Streamy.rooms('lodge').emit('my_msg', { my: 'data' });
+```
+
+### Streamy.isInRoom(room_name, [id])
+
+Check if a user is in the given room. Client side, it only checks if Streamy._rooms[room_name] exists.
 
 ## Utils
 

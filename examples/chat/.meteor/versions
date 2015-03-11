@@ -1,5 +1,4 @@
 application-configuration@1.0.4
-autopublish@1.0.2
 autoupdate@1.1.5
 base64@1.0.2
 binary-heap@1.0.2
@@ -18,7 +17,6 @@ html-tools@1.0.3
 htmljs@1.0.3
 http@1.0.10
 id-map@1.0.2
-insecure@1.0.2
 jquery@1.11.3
 json@1.0.2
 launch-screen@1.0.1
@@ -48,3 +46,4 @@ underscore@1.0.2
 url@1.0.3
 webapp@1.1.6
 webapp-hashing@1.0.2
+yuukan:streamy@0.9.1
