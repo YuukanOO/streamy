@@ -1,5 +1,7 @@
 # streamy: Directly use meteor streams with a friendly to use API.
 
+I'm currently in a [big refactoring](https://github.com/YuukanOO/streamy/tree/dev)! **Stay tuned!**
+
 ## Core API
 
 ### Streamy.onConnect(cb)
@@ -64,8 +66,8 @@ Streamy.on('message_from_client', function(data, socket) {
 
 By default, the server allow direct messages, if you want to edit this behaviour, just override server-side methods:
 
-- `Streamy.__direct__.allow`: function(data, from) { return true; }
-- `Streamy.__direct__.deny`: function(data, from) { return false; }
+- `Streamy.__direct__.allow: function(data, from) { return true; }`
+- `Streamy.__direct__.deny: function(data, from) { return false; }`
 
 ### Streamy.sessions(sid)
 
@@ -96,16 +98,6 @@ Streamy.sessions('someSessionID').emit('hello', { name: 'John' });
 var all_sessions = Streamy.sessions();
 var one_session = Streamy.sessions('someSessionID'); // Returns the socket
 ```
-
-## Rooms (NOT IMPLEMENTED YET)
-
-### Streamy.join(room_name)
-
-Join the given room.
-
-### Streamy.rooms(room_name)
-
-Returns the list of all available rooms if no name is given or else the Room object.
 
 ## Utils
 
