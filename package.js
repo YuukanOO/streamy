@@ -20,18 +20,23 @@ Package.onUse(function(api) {
   // Both
   api.addFiles([
     'lib/namespaces.js',
-    'lib/core/core.js'
+    'lib/core/core.js',
+    'lib/direct_messages/direct_messages.js'
   ]);
   
   // Client only
   api.addFiles([
-    'lib/core/core_client.js'
+    'lib/core/core_client.js',
+    'lib/direct_messages/direct_messages_client.js'
   ], 'client');
   
   // Server only
   api.addFiles([
-    'lib/core/core_server.js'
+    'lib/core/core_server.js',
+    'lib/direct_messages/direct_messages_server.js'
   ], 'server');
+  
+  api.addFiles('lib/startup.js');
   
   api.export([
     'Streamy'
