@@ -12,6 +12,8 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0.3.1');
+  //api.versionsFrom('WINDOWS-PREVIEW@0.3.0');
+  
   api.use([
     'underscore',
     'mongo'
@@ -23,6 +25,7 @@ Package.onUse(function(api) {
     'lib/core/core.js',
     'lib/direct_messages/direct_messages.js',
     'lib/broadcasts/broadcasts.js',
+    'lib/rooms/rooms.js',
     'lib/utils/utils.js'
   ]);
   
