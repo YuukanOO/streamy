@@ -64,7 +64,7 @@ a:hover {
 
 .home__title,
 .rooms__title {
-  color: @accent-inverse;
+  color: @accent-inverse !important;
   background-color: @accent-color;
   font-weight: bold;
   font-size: 22px;
@@ -74,10 +74,26 @@ a:hover {
   text-align: center;
 }
 
+.rooms__title {
+  margin-bottom: @baseline / 4;
+
+  &:hover {
+    background-color: @accent-inverse;
+    color: @accent-color !important;
+    text-decoration: none;
+  }
+}
+
 .home__subtitle {
   font-size: 14px;
   color: @gray;
   margin-bottom: @baseline;
+}
+
+.rooms__subtitle {
+  color: @accent-inverse-light;
+  margin-left: @baseline / 2;
+  margin-right: @baseline / 2;
 }
 
 .home__nick {

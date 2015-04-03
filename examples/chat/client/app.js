@@ -1,3 +1,6 @@
+// Since we don't want all those debug messages
+Meteor._debug = function() {};
+
 var nick = new ReactiveVar();
 var room = new ReactiveVar('lobby');
 
@@ -45,8 +48,7 @@ function insertMessage(room, body, from) {
     'from': c && c.nick
   });
 
-  // Must find a new way, it doesn't work..
-  $('.chat__messages').scrollTop($('.chat__messages *').last().position().top);
+  $('.chat__messages').scrollTo($('li.chat__messages__item:last'));
 }
 
 // On disconnect, reset nick name
@@ -73,7 +75,7 @@ Streamy.on('private', function(data) {
 // Someone has joined
 Streamy.on('__join__', function(data) {
   var c = Clients.findOne({ 'sid': data.sid });
-  var msg = (c && c.nick) + " has joined";
+  var msg = ((c && c.nick) || "Someone") + " has joined";
 
   insertMessage(data.room.toLowerCase(), msg);
 });

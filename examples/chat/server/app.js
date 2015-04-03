@@ -13,8 +13,6 @@ Streamy.onConnect(function(socket) {
  * Upon disconnect, clear the client database
  */
 Streamy.onDisconnect(function(socket) {
-  console.log('Disconnected', socket.id);
-
   Clients.remove({
     'sid': socket.id
   });
@@ -27,11 +25,16 @@ Streamy.on('nick_set', function(data, from) {
   if(!data.handle)
     throw new Meteor.Error('Empty nick');
 
-  console.log('Nick set to', data.handle, 'for', from.id);
   Clients.update({
     'sid': from.id
   }, {
     $set: { 'nick': data.handle }
+  });
+
+  // Inform the lobby
+  Streamy.broadcast('__join__', {
+    'sid': from.id,
+    'room': 'lobby'
   });
 });
 
