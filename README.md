@@ -208,8 +208,16 @@ Clear all empty rooms. This method is called when a client leave a room to ensur
 
 Retrieve all rooms for the given session id.
 
-## Server utilities
+## Utilities
 
-### Streamy.sockets([sid])
+### Streamy.sockets([sid]) Server-only
 
 If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.
+
+### Streamy.userId([socket])
+
+Retrieve meteor userId. On the server, you should provide the socket object to retrieve the associated userId.
+
+### Streamy.user([socket])
+
+Retrieve the meteor user. On the server, you should provide the socket object to retrieve the user associated.
