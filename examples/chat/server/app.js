@@ -2,8 +2,6 @@
  * Called upon a client connection, insert the user
  */
 Streamy.onConnect(function(socket) {
-  console.log('Connected', socket.id);
-
   Clients.insert({
     'sid': socket.id
   });
