@@ -1,5 +1,7 @@
 # streamy: Directly use meteor streams with a friendly to use API.
 
+The chat example is available live at [http://streamy.meteor.com](http://streamy.meteor.com/). It's not bug free yet but that's a pretty good example of what you can do with this package :)
+
 ## Core
 
 ### Streamy.emit(message_name, data_object, [socket])
