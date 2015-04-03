@@ -1,0 +1,269 @@
+@accent-color: #F4511E;
+@accent-inverse: #fff;
+@accent-inverse-light: #FCBFAC;
+@gray: #777;
+@gray-lighter: #ccc;
+@gray-light: #eee;
+@pink: #E47689;
+
+@base-font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+@base-font-size: 16px;
+@baseline: 24px;
+@rooms-width: 15%;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html,
+.home__wrapper,
+.app__wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+body,
+.home__nick,
+.chat__message,
+.chat__messages__nick,
+.chat__messages__body,
+.room__input {
+  font-family: @base-font-family;
+  font-size: @base-font-size;
+  line-height: @baseline;
+}
+
+a,
+a:link,
+a:visited {
+  color: @accent-color;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.home__wrapper {
+  display: table;
+}
+
+.home__centered {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.home__body {
+  margin: 0 auto;
+  max-width: 300px;
+  text-align: center;
+}
+
+.home__title,
+.rooms__title {
+  color: @accent-inverse;
+  background-color: @accent-color;
+  font-weight: bold;
+  font-size: 22px;
+  padding: @baseline / 2;
+  margin-bottom: @baseline;
+  display: inline-block;
+  text-align: center;
+}
+
+.home__subtitle {
+  font-size: 14px;
+  color: @gray;
+  margin-bottom: @baseline;
+}
+
+.home__nick {
+  border: 0;
+  outline: none;
+  width: 100%;
+  text-align: center;
+  margin-bottom: @baseline;
+}
+
+.room__input {
+  margin-bottom: @baseline / 2;
+  margin-left: @baseline / 2;
+  margin-right: @baseline / 2;
+  border: 0;
+  background-color: transparent;
+  color: @accent-inverse;
+  outline: none;
+
+  &::-webkit-input-placeholder {
+    color:    @accent-inverse-light;
+  }
+  &:-moz-placeholder {
+     color:    @accent-inverse-light;
+     opacity:  1;
+  }
+  &::-moz-placeholder {
+     color:    @accent-inverse-light;
+     opacity:  1;
+  }
+  &:-ms-input-placeholder {
+     color:    @accent-inverse-light;
+  }
+}
+
+.rooms {
+  background-color: @accent-color;
+  height: 100%;
+  float: left;
+  width: @rooms-width;
+}
+
+.rooms__title {
+  border: 3px solid @accent-inverse;
+  background-color: transparent;
+  font-size: @base-font-size;
+  padding: @baseline / 4;
+  margin-top: @baseline / 2;
+  margin-left: @baseline / 2;
+}
+
+.rooms__list {
+  list-style-type: none;
+}
+
+.rooms__list__item__leave {
+  font-weight: normal;
+  display: none;
+  color: @accent-inverse-light;
+  position: absolute;
+  right: @baseline / 2;
+  top: @baseline / 4;
+
+  &:hover {
+    color: @accent-inverse;
+  }
+}
+
+.rooms__list__item {
+  display: block;
+  cursor: pointer;
+  color: @accent-inverse;
+  padding: @baseline / 4 @baseline / 2;
+  position: relative;
+  font-weight: bold;
+
+  &:hover {
+    .rooms__list__item__leave {
+      display: block;
+    }
+  }
+}
+
+.rooms__name {
+  display: block;
+}
+
+.rooms__list__item_active {
+  @border-width: @baseline / 8;
+  border-left: @border-width solid @accent-inverse-light;
+  padding-left: (@baseline / 2 - @border-width);
+}
+
+.rooms__list__separator {
+  padding: 0 @baseline / 2;
+  cursor: default;
+  font-weight: normal;
+  font-size: 14px;
+  color: @accent-inverse-light;
+}
+
+.chat {
+  float: left;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  width: 100 - @rooms-width;
+}
+
+.chat__input {
+  background-color: @gray-light;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: absolute;
+  border-top: 1px solid @gray-lighter;
+  overflow: hidden;
+}
+
+.chat__input__wrapper {
+  margin: @baseline / 2;
+}
+
+.chat__input__nick {
+  line-height: @baseline * 1.5;
+  color: @gray;
+  float: left;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: @baseline / 2;
+}
+
+.chat__input__message {
+  overflow: hidden;
+}
+
+.chat__message {
+  border: 1px solid @gray-lighter;
+  padding: @baseline / 4;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.chat__messages {
+  list-style-type: none;
+  padding: @baseline / 2;
+}
+
+.chat__messages__item {
+  clear: both;
+}
+
+.chat__messages__nick {
+  font-weight: bold;
+  font-size: 14px;
+  color: @gray;
+  cursor: pointer;
+  float: left;
+  width: 15%;
+}
+
+.chat__messages__body {
+  float: left;
+  width: 85%;
+  box-sizing: border-box;
+  border-left: 1px solid @gray-lighter;
+  padding-left: @baseline / 2;
+}
+
+.chat__messages__notice {
+  font-style: italic;
+  color: @gray;
+
+  .chat__messages__body {
+    padding-left: 0;
+    border: 0;
+  }
+  .chat__messages__nick {
+    display: none;
+  }
+}
+
+.chat__messages__direct {
+  color: @pink;
+
+  .chat__messages__nick {
+    color: @pink;
+  }
+}
