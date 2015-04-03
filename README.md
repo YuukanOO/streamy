@@ -61,7 +61,7 @@ Broadcast the given message to all connected sessions. If you specify excepted_s
 // Client and server.
 
 Streamy.on('my_message_type', function(data) {
-  // The server has added a __from property which contains the session id of the sender
+  // The server has added a __from property (client side) which contains the session id of the sender
   console.log('A broadcast message', data);
 });
 
@@ -100,7 +100,7 @@ Streamy.on('some_message', function(data, from) {
 Streamy.sessions(other_guy_sid).emit('private', { body: 'This is a private message' });
 ```
 
-The server will add the property `data.__from` which contains the sender session id.
+The server will add the property (client side) `data.__from` which contains the sender session id.
 
 ## Rooms
 
@@ -178,9 +178,11 @@ Streamy.Rooms.onLeave = function(room_name, socket) {
 };
 ```
 
+The collection is not published so you'll have to do it yourself, check the example if you don't know where to start.
+
 ### Streamy.join(room_name)
 
-Join the given room. This call will created the room if needed and add the session id to this room model.
+Join the given room. This call will created the room if needed and add the session id to the room record.
 
 ### Streamy.leave(room_name)
 
@@ -188,10 +190,24 @@ Leave the given room. Remove the session id from the room record.
 
 ### Streamy.rooms([room_name])
 
-Used as `Streamy.sessions`, if no argument is provided, it will returns the collection cursor containing all rooms. If you give a name, it will returns an object which contains an `emit` method which works the same as the `core#emit` method.
+Used like `Streamy.sessions`, if no argument is provided, it will returns the collection cursor containing all rooms. If you give a name, it will returns an object which contains an `emit` method which works the same as the `core#emit` method.
 
-Please note that in order for this method to work, you should hava successfuly joined this room via `Streamy.join` first.
+Please note that in order for this method to work, you should have successfuly joined this room via `Streamy.join` first.
 
 ```javascript
 Streamy.rooms('my_room').emit('my_message', {});
 ```
+
+### Streamy.Rooms.clearEmpty
+
+Clear all empty rooms. This method is called when a client leave a room to ensure some sanity of the database.
+
+### Streamy.Rooms.allForSession(sid)
+
+Retrieve all rooms for the given session id.
+
+## Server utilities
+
+### Streamy.sockets([sid])
+
+If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.
