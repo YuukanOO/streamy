@@ -44,6 +44,9 @@ function insertMessage(room, body, from) {
     'body': body,
     'from': c && c.nick
   });
+
+  // Must find a new way, it doesn't work..
+  $('.chat__messages').scrollTop($('.chat__messages *').last().position().top);
 }
 
 // On disconnect, reset nick name
@@ -99,8 +102,14 @@ Template.NickChoice.events({
   }
 });
 
+function resizeChatZone() {
+  $('.chat__messages').css('height', $(window).outerHeight() - ($('.chat__input').outerHeight() * 1.5));
+}
+
 Template.App.rendered = function() {
   this.$('.chat__message').focus();
+  $(window).resize(resizeChatZone);
+  $(window).resize();
 };
 
 Template.App.events({
