@@ -11,8 +11,8 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.0.3.1');
-  //api.versionsFrom('WINDOWS-PREVIEW@0.3.0');
+  //api.versionsFrom('1.0.3.1');
+  api.versionsFrom('1.1');
   
   api.use([
     'underscore',
@@ -34,6 +34,7 @@ Package.onUse(function(api) {
     'lib/core/core_client.js',
     'lib/direct_messages/direct_messages_client.js',
     'lib/broadcasts/broadcasts_client.js',
+    'lib/rooms/rooms_client.js',
     'lib/utils/utils_client.js'
   ], 'client');
   
@@ -42,6 +43,7 @@ Package.onUse(function(api) {
     'lib/core/core_server.js',
     'lib/direct_messages/direct_messages_server.js',
     'lib/broadcasts/broadcasts_server.js',
+    'lib/rooms/rooms_server.js',
     'lib/utils/utils_server.js'
   ], 'server');
   
