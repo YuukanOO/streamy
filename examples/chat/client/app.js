@@ -169,7 +169,10 @@ Template.App.events({
   'click .rooms__list__item__leave': function(evt) {
     if(evt.preventDefault) evt.preventDefault();
 
-    Streamy.leave($(evt.target).prev().text());
+    var room_name = $(evt.target).prev().text();
+
+    Streamy.leave(room_name);
+    Messages.remove({ 'room': room_name }); // Remove messages from this room
     room.set('lobby');
 
     return false;
