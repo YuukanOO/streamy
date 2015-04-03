@@ -14,6 +14,12 @@ Streamy.onDisconnect(function(socket) {
   Clients.remove({
     'sid': socket.id
   });
+
+  // Inform the lobby
+  Streamy.broadcast('__leave__', {
+    'sid': socket.id,
+    'room': 'lobby'
+  });
 });
 
 /**
@@ -28,6 +34,9 @@ Streamy.on('nick_set', function(data, from) {
   }, {
     $set: { 'nick': data.handle }
   });
+
+  // Ack so the user can proceed to the rooms page
+  Streamy.emit('nick_ack', { 'nick': data.handle }, from);
 
   // Inform the lobby
   Streamy.broadcast('__join__', {

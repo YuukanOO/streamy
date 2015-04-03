@@ -57,6 +57,10 @@ Streamy.onDisconnect(function() {
   Messages.remove({});
 });
 
+Streamy.on('nick_ack', function(data) {
+  nick.set(data.nick);
+});
+
 // On a lobby message, insert the message
 Streamy.on('lobby', function(data) {
   insertMessage('lobby', data.body, data.__from);
@@ -97,10 +101,10 @@ Template.NickChoice.events({
 
     rooms_sub = Meteor.subscribe('rooms', Streamy.id);
 
-    nick.set(tpl.$('#nickname').val());
+    var val = tpl.$('#nickname').val();
 
-    if(nick.get())
-      Streamy.emit('nick_set', { 'handle': nick.get() });
+    if(val)
+      Streamy.emit('nick_set', { 'handle': val });
   }
 });
 
