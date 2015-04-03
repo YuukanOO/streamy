@@ -156,7 +156,7 @@ Template.App.events({
       return;
 
     // Join the room
-    Streamy.join(val);
+    Streamy.join(val.toLowerCase());
 
     // And switch to it
     room.set(val.toLowerCase());
