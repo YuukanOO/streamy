@@ -1,0 +1,73 @@
+<head>
+  <meta charset="utf-8">
+  <title>Streamy: chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700,900,400italic,700italic' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  {{#unless nick}}
+    {{> NickChoice}}
+  {{else}}
+    {{> App}}
+  {{/unless}}
+</body>
+
+<template name="NickChoice">
+  <div class="home__wrapper">
+    <div class="home__centered">
+      <div class="home__body">
+        <h1 class="home__title">streamy</h1>
+        <form>
+          <input type="text" id="nickname" class="home__nick" placeholder="Enter your nick and press Enter" />
+        </form>
+        <p class="home__subtitle">This is a simple multi-rooms chat application to demonstrate how to use the <a href="https://github.com/YuukanOO/streamy" target="blank">streamy</a> meteor package for realtime non-persistent communications.</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="App">
+  <div class="app__wrapper">
+    <div class="rooms">
+      <h1 class="rooms__title">streamy</h1>
+
+      <form class="create_or_join">
+        <input type="text" id="room__input" class="room__input" placeholder="Create or join a room" />
+      </form>
+
+      <ul class="rooms__list">
+        <li class="rooms__list__item rooms__list__separator">Rooms</li>
+        <li class="rooms__list__item rooms__list__joinable {{selectedClass 'lobby'}}">Lobby</li>
+        {{#each rooms}}
+          <li class="rooms__list__item rooms__list__joinable {{selectedClass name}}">
+            <span class="rooms__name">{{name}}</span>
+            <span class="rooms__list__item__leave">
+              Leave
+            </span>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="chat">
+      <ul class="chat__messages">
+        {{#each messages}}
+        <li class="chat__messages__item {{#unless from}}chat__messages__notice{{/unless}} {{#unless room}}chat__messages__direct{{/unless}}">
+          <p class="chat__messages__nick">{{from}}</p>
+          <p class="chat__messages__body">{{body}}</p>
+        </li>
+        {{/each}}
+      </ul>
+
+      <form class="chat__input">
+        <div class="chat__input__wrapper">
+          <label class="chat__input__nick" for="chat__message">{{nick}}</label>
+          <div class="chat__input__message">
+            <input type="text" id="chat__message" class="chat__message" placeholder="Enter your message and hit enter" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>

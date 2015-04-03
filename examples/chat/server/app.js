@@ -1,48 +1,56 @@
 /**
- * Send a message to all client except the one with the given socket id (if any)
- */
-function sendToAll(msg, data, except_id) {
-  var clients = Streamy.sessions();
-  
-  _.each(clients, function(cli) {
-    if(cli.id !== except_id) {
-      Streamy.emit(msg, data, cli);
-    }
-  });
-}
-
-/**
- * On connection, give the user a name and notifify connected users
+ * Called upon a client connection, insert the user
  */
 Streamy.onConnect(function(socket) {
-  var new_nick = socket.id;
-  
-  socket.nick = new_nick;
-  
-  this.emit('nick', { 'new_nick': socket.nick }, socket);
-  
-  sendToAll('message', {
-    'content': socket.nick + ' has join',
-    'from': 'server'
-  }, socket.id);
+  console.log('Connected', socket.id);
+
+  Clients.insert({
+    'sid': socket.id
+  });
 });
 
 /**
- * On disconnect, notify other users
+ * Upon disconnect, clear the client database
  */
 Streamy.onDisconnect(function(socket) {
-  sendToAll('message', {
-    'content': socket.nick + ' has left',
-    'from': 'server'
-  }, socket.id);
+  console.log('Disconnected', socket.id);
+
+  Clients.remove({
+    'sid': socket.id
+  });
 });
 
 /**
- * When it receives a message, dispatch it to all clients
+ * When the nick is set by the client, update the collection accordingly
  */
-Streamy.on('message', function(data, from) {
-  sendToAll('message', {
-    'content': data.content,
-    'from': from.nick
-  }, from.id);
+Streamy.on('nick_set', function(data, from) {
+  if(!data.handle)
+    throw new Meteor.Error('Empty nick');
+
+  console.log('Nick set to', data.handle, 'for', from.id);
+  Clients.update({
+    'sid': from.id
+  }, {
+    $set: { 'nick': data.handle }
+  });
+});
+
+/**
+ * Only publish clients with not empty nick
+ */
+Meteor.publish('clients', function() {
+  return Clients.find({
+    'nick': { $ne: null }
+  });
+});
+
+/**
+ * Publish rooms where the user appears
+ * @param  {String} sid) Client id
+ */
+Meteor.publish('rooms', function(sid) {
+  if(!sid)
+    return this.error(new Meteor.Error('sid null'));
+
+  return Streamy.Rooms.allForSession(sid);
 });

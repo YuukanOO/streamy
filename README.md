@@ -1,118 +1,213 @@
 # streamy: Directly use meteor streams with a friendly to use API.
 
-I'm currently in a [big refactoring](https://github.com/YuukanOO/streamy/tree/dev)! **Stay tuned!**
+## Core
 
-## Core API
+### Streamy.emit(message_name, data_object, [socket])
 
-### Streamy.onConnect(cb)
+Send a message with associated data to a socket. On the client, you do not need to provide the socket arg since it will use the client socket. On the server, you must provide it.
 
-Register a callback to be called when the connection has been made.
+### Streamy.on(message_name, callback)
 
-```javascript
-// Client
-Streamy.onConnect(function() {
-  // this <Streamy>
-  console.log("I'm connected!");
-});
-
-// Server
-Streamy.onConnect(function(socket) {
-  // this <Streamy>
-  console.log("Client connected", socket.headers['x-real-ip']);
-});
-```
-
-### Streamy.on(event_name, cb)
-
-Register a callback to be called when the message is received.
+Register a callback for a specific message. The callback will be called when a message of this type has been received. Callback are of the form:
 
 ```javascript
 // Client
-Streamy.on('message_from_server', function(data) {
-  // this <Streamy>
-  console.log('Received from server:', data);
+Streamy.on('my_message', function(data) {
+  console.log(data);
 });
 
 // Server
-Streamy.on('message_from_client', function(data, socket) {
-  // this <Streamy>
-  console.log('Received from client', socket.headers['x-real-ip'], data);
+Streamy.on('my_message', function(data, from) {
+  // from is a Socket object
+  Streamy.emit('pong', {}, from); // An example of replying to a message
 });
 ```
 
-### Streamy.emit(event_name, data, to)
+### Streamy.onConnect(callback) / Streamy.onDisconnect(callback)
 
-Send a message for the given `event_name` with associated data.
-On the server, `to` is used to specify on which socket the event should be write.
+Register callbacks to be called upon connection, disconnection. Please not that this is tied to the websockets only and has nothing to do with authentification.
+
+The callback is parameterless on client. On the server, it will contains one parameter, the socket which has been connected/disconnected.
+
+## Broadcasting
+
+Streamy allow you to use broadcasting (ie. Send a message to every connected sessions).
+
+You can control wether or not this is activated by overriding this method on the server:
 
 ```javascript
-// Client
-Streamy.emit('message_from_client', {
-  m: 'This message will be send to the server'
-});
+Streamy.BroadCasts.allow = function(data, from) {
+  // from is the socket object
+  // data contains raw data you can access:
+  //  - the message via data.__msg
+  //  - the message data via data.__data
 
-// Server
-Streamy.on('message_from_client', function(data, socket) {
-  console.log(data.m);
-  
-  this.emit('message_from_server', {
-    m: 'Roger that!'
-  }, socket);
-});
-
+  return true;
+};
 ```
 
-## Sessions
+Every specific features after this line works the same way using the above core methods. When you call `broadcast`, `sessions` or `rooms`, this is the flow:
 
-By default, the server allow direct messages, if you want to edit this behaviour, just override server-side methods:
+- Wrap your message in a specific message (__direct__, __broadcast__, __room__, __join__, __leave__)
+- The above specific messages are handled by the server
+- It call the appropriate `allow` method to determine if it must continue
+- If `allow` returns true, send the message to concerned sessions
 
-- `Streamy.__direct__.allow: function(data, from) { return true; }`
-- `Streamy.__direct__.deny: function(data, from) { return false; }`
+### Streamy.broadcast(message_name, data, [except_sids])
+
+Broadcast the given message to all connected sessions. If you specify excepted_sids (Array or String), it will excludes those session id to the broadcast.
+
+```javascript
+// Client and server.
+
+Streamy.on('my_message_type', function(data) {
+  // The server has added a __from property (client side) which contains the session id of the sender
+  console.log('A broadcast message', data);
+});
+
+Streamy.broadcast('my_message_type', { my_data: 'testing broadcasting' });
+```
+
+## Direct messages
+
+Send a direct message to a session.
+
+You can control wether or not this is activated by overriding this method on the server:
+
+```javascript
+Streamy.DirectMessages.allow = function(data, from, to) {
+  // from is the socket object
+  // to is the recipient socket object
+  // data contains raw data you can access:
+  //  - the message via data.__msg
+  //  - the message data via data.__data
+
+  return true;
+};
+```
 
 ### Streamy.sessions(sid)
 
-Retrieve socket sessions. If `sid` is provided:
-
-- On the client, it will returns a special object with an `emit` method to write a direct message (controlled by the server)
-- On the server, it will returns the socket associated with this sid or else a mock
+Returns a special object which contains one method: `emit` which works the same as the `core#emit` method. On the server, you can also send a socket in place of the sid parameter.
 
 ```javascript
-// Client
-Streamy.sessions('someSessionID').emit('hello', { name: 'John' });
+// On the server
+Streamy.on('some_message', function(data, from) {
+  Streamy.sessions(from/** or from.id */).emit('pong', {});
+});
 
-// The true emitted object is:
-{
-  msg: '__direct__',
-  __msg: 'hello',
-  __data: { name: 'John' },
-  __to: 'someSessionID'
-}
-
-// If the server allowed it, the receiver will receiver
-{
-  __from: 'emitterSessionID',
-  name: 'John'
-}
-
-// Server
-var all_sessions = Streamy.sessions();
-var one_session = Streamy.sessions('someSessionID'); // Returns the socket
+// On the client
+Streamy.sessions(other_guy_sid).emit('private', { body: 'This is a private message' });
 ```
 
-## Utils
+The server will add the property (client side) `data.__from` which contains the sender session id.
 
-### Streamy.userId(socket)
+## Rooms
 
-Helpers to retrieve the userId inside a streamy callback. On the server, you will need to give it the associated socket.
+This one is a bit more complicated. It let you sends messages to specific rooms. Rooms are stored in a Mongo collection named `streamy_rooms` and is available through `Streamy.Rooms.model`.
+
+A room record is described as follow:
+
+```json
+{
+  "_id": "mongo id",
+  "name": "The room name",
+  "session_ids": [
+    "Every connected",
+    "session IDs"
+  ]
+}
+```
+
+You can control the behaviour of the room feature by overriding this methods on the server:
 
 ```javascript
-// Client
-Streamy.onConnect(function() {
-  console.log("I'm connected!", this.userId());
-});
+// Wether or not an user can join a room
+Streamy.Rooms.allowJoin = function(data, from) {
+  // from is the socket object
+  // data contains raw data you can access:
+  //  - the room name via data.name
+  //  - the message via data.__msg
+  //  - the message data via data.__data
 
-// Server
-Streamy.on('some-message', function(socket) {
-  console.log("Client connected!", this.userId(socket));
-});
+  return true;
+};
+
+// Wether or not an user can leave a room
+Streamy.Rooms.allowLeave = function(data, from) {
+  // from is the socket object
+  // data contains raw data you can access:
+  //  - the room name via data.name
+  //  - the message via data.__msg
+  //  - the message data via data.__data
+
+  return true;
+};
+
+// Called when a user wants to send a message in this room
+Streamy.Rooms.allowMessage = function() {
+  // from is the socket object
+  // data contains raw data you can access:
+  //  - the room name via data.__in
+  //  - the message via data.__msg
+  //  - the message data via data.__data
+
+  // Check if the user appears in this room, this is the default implementation
+  return Streamy.Rooms.model.find({ 
+    'name': data.__in, 
+    'session_ids': from.id
+  }).count() > 0;
+}
 ```
+
+By default, when a user join or leave a room, the server will send notifications (`__join__` and `__leave__` messages) to sessions in the same room. You can override the below methods:
+
+```javascript
+Streamy.Rooms.onJoin = function(room_name, socket) {
+  Streamy.rooms(room_name).emit('__join__', {
+    'sid': socket.id,
+    'room': room_name
+  });
+};
+
+Streamy.Rooms.onLeave = function(room_name, socket) {
+  Streamy.rooms(room_name).emit('__leave__', {
+    'sid': socket.id,
+    'room': room_name
+  });
+};
+```
+
+The collection is not published so you'll have to do it yourself, check the example if you don't know where to start.
+
+### Streamy.join(room_name)
+
+Join the given room. This call will created the room if needed and add the session id to the room record.
+
+### Streamy.leave(room_name)
+
+Leave the given room. Remove the session id from the room record.
+
+### Streamy.rooms([room_name])
+
+Used like `Streamy.sessions`, if no argument is provided, it will returns the collection cursor containing all rooms. If you give a name, it will returns an object which contains an `emit` method which works the same as the `core#emit` method.
+
+Please note that in order for this method to work, you should have successfuly joined this room via `Streamy.join` first.
+
+```javascript
+Streamy.rooms('my_room').emit('my_message', {});
+```
+
+### Streamy.Rooms.clearEmpty
+
+Clear all empty rooms. This method is called when a client leave a room to ensure some sanity of the database.
+
+### Streamy.Rooms.allForSession(sid)
+
+Retrieve all rooms for the given session id.
+
+## Server utilities
+
+### Streamy.sockets([sid])
+
+If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.

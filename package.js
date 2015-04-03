@@ -1,6 +1,6 @@
 Package.describe({
   name: 'yuukan:streamy',
-  version: '0.9.1',
+  version: '1.0.0',
   // Brief, one-line summary of the package.
   summary: 'Simple interface to use the underlying sockjs in a meteor application',
   // URL to the Git repository containing the source code for this package.
@@ -12,16 +12,48 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0.3.1');
-  api.use('underscore');
-  api.addFiles('lib/streamy.js');
-  api.add_files('lib/streamy_client.js', 'client');
-  api.add_files('lib/streamy_server.js', 'server');
-  api.add_files('lib/global_streamy.js');
-  api.export('Streamy');
+  
+  api.use([
+    'underscore',
+    'mongo'
+  ]);
+  
+  // Both
+  api.addFiles([
+    'lib/namespaces.js',
+    'lib/core/core.js',
+    'lib/direct_messages/direct_messages.js',
+    'lib/broadcasts/broadcasts.js',
+    'lib/rooms/rooms.js',
+    'lib/utils/utils.js'
+  ]);
+  
+  // Client only
+  api.addFiles([
+    'lib/core/core_client.js',
+    'lib/direct_messages/direct_messages_client.js',
+    'lib/broadcasts/broadcasts_client.js',
+    'lib/rooms/rooms_client.js',
+    'lib/utils/utils_client.js'
+  ], 'client');
+  
+  // Server only
+  api.addFiles([
+    'lib/core/core_server.js',
+    'lib/direct_messages/direct_messages_server.js',
+    'lib/broadcasts/broadcasts_server.js',
+    'lib/rooms/rooms_server.js',
+    'lib/utils/utils_server.js'
+  ], 'server');
+  
+  api.addFiles('lib/startup.js');
+  
+  api.export([
+    'Streamy'
+  ]);
 });
 
 Package.onTest(function(api) {
   api.use('tinytest');
   api.use('yuukan:streamy');
-  //api.addFiles('yuukan:streamy-tests.js');
 });
