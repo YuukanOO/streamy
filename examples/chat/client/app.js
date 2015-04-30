@@ -1,5 +1,10 @@
 // Since we don't want all those debug messages
-Meteor._debug = function() {};
+Meteor._debug = (function (super_meteor_debug) {
+  return function (error, info) {
+    if (!(info && _.has(info, 'msg')))
+      super_meteor_debug(error, info);
+  }
+})(Meteor._debug);
 
 var nick = new ReactiveVar();
 var room = new ReactiveVar('lobby');

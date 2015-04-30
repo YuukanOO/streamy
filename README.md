@@ -12,11 +12,32 @@ meteor add yuukan:streamy
 
 **Note:** Meteor keeps logging warning with `_debug` about the message not being recognized because of [those lines](https://github.com/meteor/meteor/blob/c0aab1e8d3a5f01b4bedaa1c63dea3fc8f3db9b7/packages/ddp/livedata_connection.js#L259). You can override `Meteor._debug` to get rid of it (as shown in the example).
 
+## Basic Usage
+
+```javascript
+// Send a message to all connected sessions (Client & server)
+Streamy.broadcast('hello', { data: 'world!' });
+
+// Attach an handler for a specific message
+Streamy.on('hello', function(d, s) {
+  console.log(d.data); // Will print 'world!'
+
+  // On the server side only, the parameter 's' is the socket which sends the message, you can use it to reply to the client, see below
+});
+
+// Send a message
+// from client to server
+Streamy.emit('hello', { data: 'world!' });
+
+// from server to client, you need an instance of the client socket (retrieved inside an 'on' callback or via `Streamy.sockets(sid)`)
+Streamy.emit('hello', { data: 'world!' }, s);
+```
+
 ## Core
 
 ### Streamy.emit(message_name, data_object, [socket])
 
-Send a message with associated data to a socket. On the client, you do not need to provide the socket arg since it will use the client socket. On the server, you must provide it.
+Send a message with associated data to a socket. On the client, you do not need to provide the socket arg since it will use the client socket. On the server, **you must provide it**. If you want to send a message to all connected clients, you must use `Streamy.broadcast` (See Broadcasting).
 
 ### Streamy.on(message_name, callback)
 
