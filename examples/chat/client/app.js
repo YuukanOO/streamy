@@ -1,4 +1,4 @@
-// Since we don't want all those debug messages
+// Override Meteor._debug to filter for custom msgs
 Meteor._debug = (function (super_meteor_debug) {
   return function (error, info) {
     if (!(info && _.has(info, 'msg')))
