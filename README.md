@@ -141,9 +141,9 @@ The server will add the property (client side) `data.__from` which contains the 
 
 If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.
 
-### Streamy.id Client-only
+### Streamy.id([socket])
 
-Retrieve the session id. Sets by the server on the first connection.
+Retrieve the connection id. A unique identifier for each connections. On the server, you should provide the socket object to retrieve the associated connection id.
 
 ### Streamy.userId([socket])
 

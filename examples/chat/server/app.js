@@ -3,7 +3,7 @@
  */
 Streamy.onConnect(function(socket) {
   Clients.insert({
-    'sid': socket.id
+    'sid': Streamy.id(socket)
   });
 });
 
@@ -12,12 +12,12 @@ Streamy.onConnect(function(socket) {
  */
 Streamy.onDisconnect(function(socket) {
   Clients.remove({
-    'sid': socket.id
+    'sid': Streamy.id(socket)
   });
 
   // Inform the lobby
   Streamy.broadcast('__leave__', {
-    'sid': socket.id,
+    'sid': Streamy.id(socket),
     'room': 'lobby'
   });
 });
@@ -30,7 +30,7 @@ Streamy.on('nick_set', function(data, from) {
     throw new Meteor.Error('Empty nick');
 
   Clients.update({
-    'sid': from.id
+    'sid': Streamy.id(from)
   }, {
     $set: { 'nick': data.handle }
   });
@@ -40,7 +40,7 @@ Streamy.on('nick_set', function(data, from) {
 
   // Inform the lobby
   Streamy.broadcast('__join__', {
-    'sid': from.id,
+    'sid': Streamy.id(from),
     'room': 'lobby'
   });
 });
