@@ -1,6 +1,6 @@
 Package.describe({
   name: 'yuukan:streamy',
-  version: '1.2.0',
+  version: '1.2.1',
   // Brief, one-line summary of the package.
   summary: 'Simple interface to use the underlying sockjs in a meteor application',
   // URL to the Git repository containing the source code for this package.
