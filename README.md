@@ -126,7 +126,7 @@ Returns a special object which contains one method: `emit` which works the same 
 ```javascript
 // On the server
 Streamy.on('some_message', function(data, from) {
-  Streamy.sessions(from/** or from.id */).emit('pong', {});
+  Streamy.sessions(from/** or Streamy.id(from) */).emit('pong', {});
 });
 
 // On the client

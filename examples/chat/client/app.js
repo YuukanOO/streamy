@@ -9,12 +9,6 @@ Meteor._debug = (function (super_meteor_debug) {
 var nick = new ReactiveVar();
 var room = new ReactiveVar('lobby');
 
-// Subscribe to the clients publication
-var client_sub = Meteor.subscribe('clients');
-
-// Subscribe to rooms, done later to ensure Streamy.id is set
-var rooms_sub = null;
-
 // Add a local only collection to manage messages
 Messages = new Mongo.Collection(null);
 
@@ -56,6 +50,12 @@ function insertMessage(room, body, from) {
   $('.chat__messages').scrollTo($('li.chat__messages__item:last'));
 }
 
+// On connected, subscribe to collections
+Streamy.onConnect(function() {
+  Meteor.subscribe('clients');
+  Meteor.subscribe('rooms', Streamy.id());
+});
+
 // On disconnect, reset nick name
 Streamy.onDisconnect(function() {
   nick.set('');
@@ -83,6 +83,10 @@ Streamy.on('private', function(data) {
 
 // Someone has joined
 Streamy.on('__join__', function(data) {
+  // Dismiss if self
+  if(data.sid === Streamy.id())
+    return;
+
   var c = Clients.findOne({ 'sid': data.sid });
   var msg = ((c && c.nick) || "Someone") + " has joined";
 
@@ -100,11 +104,6 @@ Streamy.on('__leave__', function(data) {
 Template.NickChoice.events({
   'submit': function(evt, tpl) {
     if(evt.preventDefault) evt.preventDefault();
-
-    if(rooms_sub !== null)
-      rooms_sub.stop();
-
-    rooms_sub = Meteor.subscribe('rooms', Streamy.id);
 
     var val = tpl.$('#nickname').val();
 
