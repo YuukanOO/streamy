@@ -147,7 +147,17 @@ Retrieve the connection id. A unique identifier for each connections. On the ser
 
 ### Streamy.userId([socket])
 
-Retrieve meteor userId. On the server, you should provide the socket object to retrieve the associated userId.
+Retrieve meteor userId. On the server, you should provide the socket object to retrieve the associated userId. It will return a reactive object. To keep track of user states on the server, you could do something like this:
+
+```javascript
+Streamy.onConnect(function(socket) {
+  Tracker.autorun(function() {
+    var uid = Streamy.userId(socket); // uid will be null if the user is not logged in, otherwise, it will take the userId value
+
+    console.log("New userId state for", Streamy.id(socket), uid);
+  });
+});
+```
 
 ### Streamy.user([socket])
 
