@@ -162,3 +162,7 @@ Streamy.onConnect(function(socket) {
 ### Streamy.user([socket])
 
 Retrieve the meteor user. On the server, you should provide the socket object to retrieve the user associated.
+
+### Streamy.userSockets(user_ids) Server-only
+
+Retrieve sockets for a specific set of users. You should provide the desired users as an array of user ids.
