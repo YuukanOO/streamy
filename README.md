@@ -39,10 +39,6 @@ Streamy.emit('hello', { data: 'world!' }, s);
 
 Send a message with associated data to a socket. On the client, you do not need to provide the socket arg since it will use the client socket. On the server, **you must provide it**. If you want to send a message to all connected clients, you must use `Streamy.broadcast` (See Broadcasting).
 
-### Streamy.groupEmit(message_name, data_object, sockets) Server-only
-
-Send a message with associated data to a group of sockets. This differs from `Streamy.broadcast` in that you are choosing a specific group to send your message to.
-
 ### Streamy.on(message_name, callback)
 
 Register a callback for a specific message. The callback will be called when a message of this type has been received. Callback are of the form:
@@ -143,7 +139,7 @@ The server will add the property (client side) `data.__from` which contains the 
 
 ### Streamy.sockets([sid]) Server-only
 
-If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.
+If no parameter is given, returns all connected socket objects. If a string is provided it will try to retrieve the socket associated with the given sid. If an array is provided, it will try to retrieve the sockets for the given userIds.
 
 ### Streamy.id([socket])
 
@@ -166,7 +162,3 @@ Streamy.onConnect(function(socket) {
 ### Streamy.user([socket])
 
 Retrieve the meteor user. On the server, you should provide the socket object to retrieve the user associated.
-
-### Streamy.userSockets(user_ids) Server-only
-
-Retrieve sockets for a specific set of users. You should provide the desired users as an array of user ids.
