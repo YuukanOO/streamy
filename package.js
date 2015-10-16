@@ -1,6 +1,6 @@
 Package.describe({
   name: 'yuukan:streamy',
-  version: '1.2.5',
+  version: '1.3.0',
   // Brief, one-line summary of the package.
   summary: 'Simple interface to use the underlying sockjs in a meteor application',
   // URL to the Git repository containing the source code for this package.
@@ -12,14 +12,14 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0.3.1');
-  
+
   api.use([
     'underscore',
     'mongo',
     'check',
     'reactive-var'
   ]);
-  
+
   // Both
   api.addFiles([
     'lib/namespaces.js',
@@ -28,7 +28,7 @@ Package.onUse(function(api) {
     'lib/broadcasts/broadcasts.js',
     'lib/utils/utils.js'
   ]);
-  
+
   // Client only
   api.addFiles([
     'lib/core/core_client.js',
@@ -36,7 +36,7 @@ Package.onUse(function(api) {
     'lib/broadcasts/broadcasts_client.js',
     'lib/utils/utils_client.js'
   ], 'client');
-  
+
   // Server only
   api.addFiles([
     'lib/core/core_server.js',
@@ -44,9 +44,9 @@ Package.onUse(function(api) {
     'lib/broadcasts/broadcasts_server.js',
     'lib/utils/utils_server.js'
   ], 'server');
-  
+
   api.addFiles('lib/startup.js');
-  
+
   api.export([
     'Streamy'
   ]);

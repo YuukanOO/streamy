@@ -130,20 +130,25 @@ Streamy.on('some_message', function(data, from) {
 });
 
 // On the client
+// You could also give it an array of sessions ids
 Streamy.sessions(other_guy_sid).emit('private', { body: 'This is a private message' });
 ```
 
 The server will add the property (client side) `data.__from` which contains the sender session id.
 
-### Streamy.sessionsForUsers(uids) Server-only
+### Streamy.sessionsForUsers(uid)
 
-This method behaves similarly to `sessions`, however it looks up the sessions based on userIds. The special object it returns contains a single `emit` method that will send to every matched user.
+This method behaves similarly to `sessions`, however it looks up the sessions based on user id(s). It returns a special object which contains one method: `emit` which works the same as the `core#emit` method. On the server, you can also send a socket in place of the uid parameter.
 
 ## Utilities
 
 ### Streamy.sockets([sid]) Server-only
 
-If no parameter is given, returns all connected socket objects. If a string is provided it will try to retrieve the socket associated with the given sid.
+If no parameter is given, returns all connected socket objects. If a string or an array of strings is provided it will returns a special object with a `send` method and matched sockets in `_sockets`.
+
+### Streamy.socketsForUsers([uid]) Server-only
+
+Behave similarly to `sockets`, however it looks up the sockets based on user id(s).
 
 ### Streamy.id([socket])
 
