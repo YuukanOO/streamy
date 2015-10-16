@@ -135,11 +135,15 @@ Streamy.sessions(other_guy_sid).emit('private', { body: 'This is a private messa
 
 The server will add the property (client side) `data.__from` which contains the sender session id.
 
+### Streamy.sessionsForUsers(uids) Server-only
+
+This method behaves similarly to `sessions`, however it looks up the sessions based on userIds. The special object it returns contains a single `emit` method that will send to every matched user.
+
 ## Utilities
 
 ### Streamy.sockets([sid]) Server-only
 
-If no parameter is given, returns all connected socket objects. Else it will try to retrieve the socket associated with the given sid.
+If no parameter is given, returns all connected socket objects. If a string is provided it will try to retrieve the socket associated with the given sid.
 
 ### Streamy.id([socket])
 
