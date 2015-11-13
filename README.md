@@ -138,7 +138,7 @@ The server will add the property (client side) `data.__from` which contains the 
 
 ### Streamy.sessionsForUsers(uid)
 
-This method behaves similarly to `sessions`, however it looks up the sessions based on user id(s). It returns a special object which contains one method: `emit` which works the same as the `core#emit` method. On the server, you can also send a socket in place of the uid parameter.
+This method behaves similarly to `sessions`, however it looks up the sessions based on user id(s). It returns a special object which contains one method: `emit` which works the same as the `core#emit` method.
 
 ## Utilities
 
