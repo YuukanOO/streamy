@@ -58,7 +58,7 @@ Streamy.on('my_message', function(data, from) {
 
 ### Streamy.onConnect(callback) / Streamy.onDisconnect(callback)
 
-Register callbacks to be called upon connection, disconnection. Please not that this is tied to the websockets only and has nothing to do with authentification.
+Register callbacks to be called upon connection, disconnection. Please note that this is tied to the websockets only and has nothing to do with authentification.
 
 The callback is parameterless on client. On the server, it will contains one parameter, the socket which has been connected/disconnected.
 
