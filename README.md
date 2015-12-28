@@ -62,6 +62,15 @@ Register callbacks to be called upon connection, disconnection. Please note that
 
 The callback is parameterless on client. On the server, it will contains one parameter, the socket which has been connected/disconnected.
 
+### Streamy.setInitOptions(options)
+
+Set the options to be passed to `Streamy.init()`. Must be called before `Streamy.init()`.
+
+* Client
+  * `connection`: The DDP connection to connect to.
+* Server
+  * `server`: The DDP server to listen to.
+
 ## Broadcasting
 
 Streamy allow you to use broadcasting (ie. Send a message to every connected sessions).
