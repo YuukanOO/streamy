@@ -64,7 +64,7 @@ The callback is parameterless on client. On the server, it will contains one par
 
 ### Streamy.setInitOptions(options)
 
-Set the options to be passed to `Streamy.init()`. Must be called before `Streamy.init()`
+Set the options to be passed to `Streamy.init()`. Must be called before `Streamy.init()`.
 
 * Client
   * `connection`: The DDP connection to connect to.
