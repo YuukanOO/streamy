@@ -94,7 +94,7 @@ Broadcast the given message to all connected sessions. If you specify excepted_s
 // Client and server.
 
 Streamy.on('my_message_type', function(data) {
-  // The server has added a __from property (client side) which contains the session id of the sender
+  // The server has added a __from and __fromUserId properties (client side) which contain the session id and userId of the sender respectively
   console.log('A broadcast message', data);
 });
 
