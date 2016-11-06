@@ -56,6 +56,14 @@ Streamy.on('my_message', function(data, from) {
 });
 ```
 
+### Streamy.off(message_name)
+
+Un-register handler of a specific message.
+
+### Streamy.close() Client-only
+
+Un-register handlers of all messages on client.
+
 ### Streamy.onConnect(callback) / Streamy.onDisconnect(callback)
 
 Register callbacks to be called upon connection, disconnection. Please note that this is tied to the websockets only and has nothing to do with authentification.
