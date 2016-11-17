@@ -12,6 +12,8 @@ meteor add yuukan:streamy
 
 **Note:** Meteor keeps logging warning with `_debug` about the message not being recognized because of [those lines](https://github.com/meteor/meteor/blob/c0aab1e8d3a5f01b4bedaa1c63dea3fc8f3db9b7/packages/ddp/livedata_connection.js#L259). You can override `Meteor._debug` to get rid of it (as shown in the [example](https://github.com/YuukanOO/streamy/blob/master/examples/chat/client/app.js#L1-7)).
 
+**Note:** Streamy now supports to work with **multiple DDP servers**. The API is updated but still be compatible with older versions.
+
 ## Basic Usage
 
 ```javascript
@@ -31,42 +33,105 @@ Streamy.emit('hello', { data: 'world!' });
 
 // from server to client, you need an instance of the client socket (retrieved inside an 'on' callback or via `Streamy.sockets(sid)`)
 Streamy.emit('hello', { data: 'world!' }, s);
+
+// Send a message to another DDP server (client & server)
+const connection = DDP.connect('external_ddp_server');
+Streamy.initConnection(connection);
+
+Streamy.emit('hello', {
+  data: 'world!',
+}, connection)
+
+// Listen on message comes from another DDP server
+Streamy.on('hello', function(d) {
+  // d is the data sent from external_ddp_server
+}, connection);
+
 ```
 
 ## Core
 
-### Streamy.emit(message_name, data_object, [socket])
+### Streamy.initConnection(ddp_connection) (multiple servers support)
 
-Send a message with associated data to a socket. On the client, you do not need to provide the socket arg since it will use the client socket. On the server, **you must provide it**. If you want to send a message to all connected clients, you must use `Streamy.broadcast` (See Broadcasting).
+Initialize an external DDP connection (create by DDP.connect) to work with Streamy. The DDP connection have be initialized before emitting messages and attaching message handlers
 
-### Streamy.on(message_name, callback)
+### Streamy.clearConnection(ddp_connection) (multiple servers support)
 
-Register a callback for a specific message. The callback will be called when a message of this type has been received. Callback are of the form:
+De-initialize an external DDP connection which was initialized by `Streamy.initConnection`. If your app connects to a DDP server, initialize it with `Streamy.initConnection` and start listening messages from that server. After communication, you should use this function to clean up the memory especially on server
+
+### Streamy.emit(message_name, data_object, [socket/ddp_connection])
+
+Send a message with associated data to a socket.
+On client, the third argument is optional. If you do not provide the third args, the message will be sent to the default Meteor server. To send message to another DDP server (not the default Meteor server), provide the DDP connection to that server as the third argument of `Streamy.emit`
+
+```javascript
+// send message to default Meteor server
+Streamy.emit('streamy_test_default_server', {
+  foo: 'bar',
+});
+
+// send message to external DDP server
+const connection = DDP.connect('external_ddp_server');
+Streamy.initConnection(connection);
+
+Streamy.emit('streamy_test_external_server', {
+  foo: 'bar',
+}, connection);
+```
+
+On server, you have to provide the third argument. It can be either a socket connected to your server or an DDP connection to other DDP servers. If you want to send a message to all connected clients, you must use `Streamy.broadcast` (See Broadcasting).
+
+### Streamy.on(message_name, callback, [ddp_connection])
+
+Register a callback for a specific message. The callback will be called when a message of this type has been received.
+The third argument is used to specify the DDP connection you want to listen on, listen on Meteor default connection if not specified
 
 ```javascript
 // Client
+
+// Listen on default Meteor server
 Streamy.on('my_message', function(data) {
   console.log(data);
 });
 
+// Listen on external DDP server
+const connection = DDP.connect('external_ddp_server');
+Streamy.initConnection(connection);
+Streamy.on('my_message', function(data) {
+  console.log(data);
+}, connection);
+
+
 // Server
+
+// Listen on messages come from connected clients
 Streamy.on('my_message', function(data, from) {
   // from is a Socket object
   Streamy.emit('pong', {}, from); // An example of replying to a message
 });
+
+// Listen on external DDP server.
+// This is the same as client actually, because when your server connect to another DDP server it becomes a client of that server
+const connection = DDP.connect('external_ddp_server');
+Streamy.initConnection(connection);
+Streamy.on('my_message', function(data) {
+  console.log(data);
+}, connection);
+
 ```
 
-### Streamy.off(message_name)
+### Streamy.off(message_name, [ddp_connection])
 
-Un-register handler of a specific message.
+Un-register handler of a specific message from a specific DDP server. Use Meteor default server if `ddp_connection` is not specified
 
 ### Streamy.close() Client-only
 
 Un-register handlers of all messages on client.
 
-### Streamy.onConnect(callback) / Streamy.onDisconnect(callback)
+### Streamy.onConnect(callback, [ddp_connection]) / Streamy.onDisconnect(callback, [ddp_connection])
 
-Register callbacks to be called upon connection, disconnection. Please note that this is tied to the websockets only and has nothing to do with authentification.
+Register callbacks to be called upon connection/disconnection of a DDP connection, use Meteor default connection as default.
+Please note that this is tied to the websockets only and has nothing to do with authentification.
 
 The callback is parameterless on client. On the server, it will contains one parameter, the socket which has been connected/disconnected.
 
