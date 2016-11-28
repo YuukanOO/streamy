@@ -108,6 +108,54 @@ Streamy.on('my_message_type', function(data) {
 
 Streamy.broadcast('my_message_type', { my_data: 'testing broadcasting' });
 ```
+## Multiple servers support
+
+Streamy comes with support for communication between multiple Meteor servers. When your app needs to connect to another Meteor server, if that server uses Streamy then communication by messages can be done easily just like between your server and client.
+
+### Streamy.Connection(connection)
+
+This is a constructor to create a Streamy connection. It requires one variable which is the connection to another Meteor server. This connection is the returned value when you connect to other Meteor server by [`DDP.connect`](https://docs.meteor.com/api/connections.html#DDP-connect). Instances of this constructor will be able to use these methods: `.on`, `.emit`, `.off`, `.onConnect`, `.onDisconnect`. They have the same effect with method having the same name of the `Streamy` object. Example:
+
+```javascript
+var connection = DDP.connect('localhost:4000');
+
+var streamyConnection = new Streamy.Connection(connection);
+
+// call when connect to localhost:4000 success
+streamyConnection.onConnect(function() {
+  console.log('Connected to localhost:4000');
+
+  // send a message to localhost:4000
+  streamyConnection.emit('hello', {
+    data: 'world',
+  });
+});
+
+// listen for message from localhost:4000
+streamyConnection.on('data', function(data) {
+  // ...
+});
+
+streamyConnection.onDisconnect(function() {
+  console.log('Disconnected from localhost:4000');
+});
+```
+
+### Streamy.Connection.prototype.on(message_name, callback)
+
+Same as [Streamy.on](#streamyonmessage_name-callback)
+
+### Streamy.Connection.prototype.off(message_name)
+
+Same as [Streamy.off](#streamyoffmessage_name)
+
+### Streamy.Connection.prototype.close()
+
+Same as [Streamy.close](#streamyclose-client-only)
+
+### Streamy.Connection.prototype.onConnect(callback) / Streamy.Connection.prototype.onDisconnect(callback)
+
+Same as [Streamy.onConnect/Streamy.onDisconnect](#streamyonconnectcallback--streamyondisconnectcallback)
 
 ## Direct messages
 
