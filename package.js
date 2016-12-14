@@ -26,7 +26,8 @@ Package.onUse(function(api) {
     'lib/core/core.js',
     'lib/direct_messages/direct_messages.js',
     'lib/broadcasts/broadcasts.js',
-    'lib/utils/utils.js'
+    'lib/utils/utils.js',
+    'lib/multiple_servers/connection.js',
   ]);
 
   // Client only
